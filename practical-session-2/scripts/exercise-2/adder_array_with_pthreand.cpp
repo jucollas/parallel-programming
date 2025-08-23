@@ -6,7 +6,7 @@ using namespace std;
 #define sz(x) (int) x.size()
 typedef long long lint;
 
-int N_THREADS = 16;
+int N_THREADS;
 pthread_mutex_t mux = PTHREAD_MUTEX_INITIALIZER;
 
 class tdata {
@@ -67,7 +67,14 @@ lint sum_arr(vector<int>& arr) {
     return ans;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Use: %s <num_thread>\n", argv[0]);
+        exit(1);
+    }
+
+    N_THREADS = stoi(argv[1]);
+
     int n; cin >> n;
     vector<int> arr(n);
     rep(i, n) cin >> arr[i];

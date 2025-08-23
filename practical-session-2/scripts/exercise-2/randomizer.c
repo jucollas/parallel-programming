@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-const int LIMIT = 1000;
+const int LIMIT = 10;
 
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
