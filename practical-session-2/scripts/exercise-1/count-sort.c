@@ -18,7 +18,6 @@ void* thread_count_sort(void* arg) {
 	int *a = data->a;
 	int *temp = data->temp;
 	int n = data->n;
-
 	for (int i = data->start; i < data->end; i++) {
 		int count = 0;
 		for (int j = 0; j < n; j++) {
@@ -73,7 +72,7 @@ void print_array(int a[], int n) {
 
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
-		fprintf(stderr, "Uso: %s <num_hilos>\n", argv[0]);
+		fprintf(stderr, "Use: %s <num_thread>\n", argv[0]);
 		exit(1);
 	}
 
