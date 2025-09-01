@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <iostream>
 
-ImageFile* SequentialEngine::applyFilter(ImageFile* file, Filter* filter) {
+ImageFile* SequentialEngine::applyFilter(ImageFile* file, const Filter* filter) {
     int width = file->getWidth();
     int height = file->getHeight();
     Pixel** data = file->getData();
@@ -19,8 +19,8 @@ ImageFile* SequentialEngine::applyFilter(ImageFile* file, Filter* filter) {
 
             for (int ky = 0; ky < kSize; ++ky) {
                 for (int kx = 0; kx < kSize; ++kx) {
-                    int px = std::clamp(x + kx - kHalf, 0, width - 1);
-                    int py = std::clamp(y + ky - kHalf, 0, height - 1);
+                    int px = std::max(0, std::min(x + kx - kHalf, width - 1));
+                    int py = std::max(0, std::min(y + ky - kHalf, height - 1));
 
                     Pixel* p = data[py * width + px];
 

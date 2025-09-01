@@ -16,7 +16,7 @@ class Processor{
     Processor(std::string input_file, std::string output_file, std::string filter = "", Engine* engine = nullptr);
     ~Processor();
     void execute();
-
+    //void execute_all_omp();
 };
 
 #endif

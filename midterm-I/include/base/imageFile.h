@@ -9,6 +9,7 @@ protected:
     int width = 0;
     int height = 0;
     int max_value = 255;
+    std::string type; 
 
 public:
     virtual ~ImageFile();
@@ -19,6 +20,7 @@ public:
     int getWidth() const { return width; }
     int getHeight() const { return height; }
     int getMaxValue() const { return max_value; }
+    std::string getType() const { return type;}
 
     virtual Pixel** getData() const = 0;
     virtual ImageFile* createEmpty() const = 0;

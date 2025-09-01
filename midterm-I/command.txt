@@ -1,0 +1,30 @@
+sudo docker build -t debian-mpi .
+
+docker network create --subnet=172.25.0.0/16 mpi-network
+
+sudo docker run -itd --name mpi1 --network mpi-network --ip 172.25.0.2 -v ../midterm-I:/home/workspace debian-mpi
+sudo docker run -itd --name mpi2 --network mpi-network --ip 172.25.0.3 -v ../midterm-I:/home/workspace debian-mpi
+sudo docker run -itd --name mpi3 --network mpi-network --ip 172.25.0.4 -v ../midterm-I:/home/workspace debian-mpi
+
+useradd -m -s /bin/bash mpiuser -> en todo los nodos
+echo "mpiuser:mpiuser" | chpasswd
+ssh-keygen -t rsa -b 2048 -N "" -f ~/.ssh/id_rsa 
+
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@172.25.0.3 -> desde nodo padre
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@172.25.0.4
+
+ssh root@172.25.0.3 -> verfica conexion desde el padre
+ssh root@172.25.0.4
+
+password: docker
+
+mpic++ -Wall -O2 -o bin/mpi_filter apps/mpi_filterer.cpp src/base/imageFile.cpp src/base/map.cpp src/base/processor.cpp src/engines/distributedMemoryEngine.cpp src/engines/sequentialEngine.cpp src/images/ppmFile.cpp src/images/pgmFile.cpp src/pixel/grayPixel.cpp src/pixel/RGBPixel.cpp src/filters.cpp src/utils.cpp
+
+
+mpirun -np 3 --hostfile hosts bin/mpi_filter 
+
+
+
+
+
+

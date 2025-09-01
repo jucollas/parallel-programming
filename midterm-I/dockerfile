@@ -1,0 +1,28 @@
+# Usa una imagen base de Linux, como Debian.
+FROM debian:latest
+
+# Establece el mantenedor o creador de la imagen.
+LABEL maintainer="tu_nombre_o_correo_aqui"
+
+# Actualiza la lista de paquetes e instala los programas necesarios.
+RUN apt-get update && apt-get install -y \
+    nano \
+    openssh-server \
+    openssh-client \
+    libopenmpi-dev \
+    openmpi-bin \
+    gcc \
+    g++ \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configuración básica de SSH para permitir conexiones.
+# Nota: La línea `RUN mkdir /var/run/sshd` ha sido eliminada.
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+RUN echo 'root:docker' | chpasswd
+
+# Expone el puerto 22 para SSH.
+EXPOSE 22
+
+# Establece el comando predeterminado al iniciar el contenedor.
+CMD ["/usr/sbin/sshd", "-D"]

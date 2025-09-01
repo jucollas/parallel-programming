@@ -1,5 +1,3 @@
-
-
 #ifndef ENGINE_CLASS
 #define ENGINE_CLASS
 
@@ -9,11 +7,7 @@
 class Engine {
 public:
     virtual ~Engine() = default;
-    virtual ImageFile* applyFilter(ImageFile* file, Filter* filter) = 0;
+    virtual ImageFile* applyFilter(ImageFile* file, const Filter* filter) = 0;
 };
 
 #endif
-
-/* SequentialEngine/
-├── MultithreadEngine/
-├── OpenMPEngine/*/

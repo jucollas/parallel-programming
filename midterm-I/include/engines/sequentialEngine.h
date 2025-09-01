@@ -7,7 +7,7 @@
 
 class SequentialEngine : public Engine {
 public:
-    ImageFile* applyFilter(ImageFile* file, Filter* filter) override;
+    ImageFile* applyFilter(ImageFile* file, const Filter* filter) override;
 };
 
 #endif // SEQUENTIAL_ENGINE_CLASS

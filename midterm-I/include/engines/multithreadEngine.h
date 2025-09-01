@@ -8,7 +8,7 @@
 
 class MultithreadEngine : public Engine {
 public:
-    ImageFile* applyFilter(ImageFile* file, Filter* filter) override;
+    ImageFile* applyFilter(ImageFile* file, const Filter* filter) override;
 
 private:
     struct ThreadData {

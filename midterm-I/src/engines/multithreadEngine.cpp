@@ -40,7 +40,7 @@ void* MultithreadEngine::threadFunc(void* arg) {
     return nullptr;
 }
 
-ImageFile* MultithreadEngine::applyFilter(ImageFile* file, Filter* filter) {
+ImageFile* MultithreadEngine::applyFilter(ImageFile* file, const Filter* filter) {
     int width = file->getWidth();
     int height = file->getHeight();
     Pixel** input = file->getData();

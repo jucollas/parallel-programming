@@ -28,3 +28,14 @@ Pixel* RGBPixel::operator*(int scalar) const {
 Pixel* RGBPixel::operator/(int scalar) const{
   return new RGBPixel((int) r / scalar, (int) g * scalar, (int) b * scalar);
 }
+
+
+void RGBPixel::serialize(int* buffer){
+    buffer[0] = r;
+    buffer[1] = g;
+    buffer[2] = b;
+}
+
+/*Pixel* RGBPixel::cloneFromBuffer(const int* buffer) const {
+    return new RGBPixel(buffer[0], buffer[1], buffer[2]);
+}*/

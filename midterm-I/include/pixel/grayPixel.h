@@ -15,6 +15,9 @@ public:
     Pixel* operator+(const Pixel& other) const override;
     Pixel* operator*(int scalar) const override;
     Pixel* operator/(int scalar) const override;
+
+    void serialize(int* buffer) override;
+    //Pixel* cloneFromBuffer(const int* buffer) const override; 
 };
 
 #endif // GRAY_PIXEL_H

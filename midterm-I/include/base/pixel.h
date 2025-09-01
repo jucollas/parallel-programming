@@ -11,6 +11,9 @@ public:
     virtual Pixel* operator+(const Pixel& other) const = 0;
     virtual Pixel* operator*(int scalar) const = 0;
     virtual Pixel* operator/(int scalar) const = 0;
+
+    virtual void serialize(int* buffer) = 0;
+    static Pixel* cloneFromBuffer(const int* buffer, bool isGray); 
 };
 
 #endif

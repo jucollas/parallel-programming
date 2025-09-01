@@ -1,3 +1,6 @@
+//#include <omp.h>
+#include <vector>
+#include <string>
 #include <iostream>
 
 #include "../../include/base/processor.h"
@@ -59,4 +62,45 @@ void Processor::execute() {
 
     delete file;
 }
+/*
+void Processor::execute_all_omp() {
+    ImageFile* file = nullptr;
 
+    if (endsWith(input_file, ".pgm")) {
+        file = new PGMFile();
+    } else if (endsWith(input_file, ".ppm")) {
+        file = new PPMFile();
+    } else {
+        std::cerr << "Unrecognized file format" << std::endl;
+        return;
+    }
+
+    if (!file->load(input_file)) {
+        std::cerr << "Failed to load file: " << input_file << std::endl;
+        delete file;
+        return;
+    }
+
+    std::string ext = endsWith(input_file, ".pgm") ? ".pgm" : ".ppm";
+
+    // Definición correcta de arreglos de punteros
+    const Filter* filters[3] = { &Blur, &Laplace, &Sharpening };
+    const char* names_filters[3] = { "blur", "laplace", "sharpening" };
+
+    std::string prefix = output_file.substr(0, output_file.size() - 5); 
+
+    #pragma omp parallel for
+    for (int i = 0; i < 3; ++i) {
+        ImageFile* out_file = engine->applyFilter(file, filters[i]);
+        std::string out_name = prefix + "_" +std::string(names_filters[i]) + ext;
+
+        if (!out_file->save(out_name)) {
+            std::cerr << "Failed to save file: " << out_name << std::endl;
+        }
+        delete out_file;
+    }
+
+    delete file;
+}
+
+*/

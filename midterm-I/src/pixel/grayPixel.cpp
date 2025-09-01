@@ -23,3 +23,13 @@ Pixel* GrayPixel::operator/(int scalar) const{
   return new GrayPixel((int) gray / scalar);
 }
 
+void GrayPixel::serialize(int* buffer) {
+    buffer[0] = gray;
+    buffer[1] = 0;  // rellenar para compatibilidad
+    buffer[2] = 0;
+}
+
+/*Pixel* GrayPixel::cloneFromBuffer(const int* buffer) const {
+    return new GrayPixel(buffer[0]);
+}*/
+

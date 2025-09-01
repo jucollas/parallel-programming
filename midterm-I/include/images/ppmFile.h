@@ -11,6 +11,9 @@ private:
     std::string magic;
     Map rgb_data;
 public:
+    PPMFile() {this->type = "PPM";}
+
+
     bool load(const std::string& filename) override;
     bool save(const std::string& filename) const override;
     Pixel** getData() const override;
