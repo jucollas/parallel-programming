@@ -26,7 +26,7 @@ Pixel* RGBPixel::operator*(int scalar) const {
 }
 
 Pixel* RGBPixel::operator/(int scalar) const{
-  return new RGBPixel((int) r / scalar, (int) g * scalar, (int) b * scalar);
+  return new RGBPixel((int) r / scalar, (int) g / scalar, (int) b / scalar);
 }
 
 

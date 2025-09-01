@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <ctime>
 #include <mpi.h>
 
 #include "../include/base/imageFile.h"
@@ -35,13 +37,22 @@ void execute_all_mpi(std::string input_file, std::string output_file, Distribute
     std::vector<const Filter*> filters = { &Blur, &Laplace, &Sharpening };
     std::vector<std::string> names = { "blur", "laplace", "sharpening" };
 
-    // Llamar a applyFilters de DistributedEngine
-    std::vector<ImageFile*> results = engine->applyFilters(file, filters);
-    std::cout << results.size() << "\n";
-
+    // Obtener el rank del nodo
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+    // Medir tiempo antes de aplicar filtros
+    auto start_wall = std::chrono::high_resolution_clock::now();
+    std::clock_t start_cpu = std::clock();
+
+    // Aplicar filtros
+    std::vector<ImageFile*> results = engine->applyFilters(file, filters);
+
+    // Medir tiempo después de aplicar filtros
+    std::clock_t end_cpu = std::clock();
+    auto end_wall = std::chrono::high_resolution_clock::now();
+
+    // Nodo padre guarda los resultados y muestra los tiempos
     if (rank == 0) {
         // Guardar resultados en archivos
         std::string prefix = output_file.substr(0, output_file.size() - ext.size());
@@ -52,6 +63,13 @@ void execute_all_mpi(std::string input_file, std::string output_file, Distribute
             }
             delete results[i];
         }
+
+        // Calcular tiempos
+        double cpu_time = double(end_cpu - start_cpu) / CLOCKS_PER_SEC;
+        double wall_time = std::chrono::duration<double>(end_wall - start_wall).count();
+
+        std::cout << "CPU time used: " << cpu_time << " seconds\n";
+        std::cout << "Total execution time: " << wall_time << " seconds\n";
     }
 
     delete file;
@@ -77,7 +95,11 @@ int main(int argc, char *argv[]) {
         execute_all_mpi(input_file, output_file, engine);
         delete engine;
     } catch (const std::exception &e) {
-        std::cerr << "Error during processing: " << e.what() << "\n";
+        int rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        if (rank == 0) {
+            std::cerr << "Error during processing: " << e.what() << "\n";
+        }
         MPI_Finalize();
         return 1;
     }

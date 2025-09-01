@@ -2,7 +2,7 @@
 #include "../../include/pixel/grayPixel.h"
 #include "../../include/pixel/RGBPixel.h"
 
-std::vector<ImageFile*> DistributedEngine::applyFilters(ImageFile* file, const std::vector<const Filter*>& filters) const  {
+std::vector<ImageFile*> DistributedEngine::applyFilters(ImageFile* file, const std::vector<const Filter*>& filters) const {
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -26,13 +26,13 @@ std::vector<ImageFile*> DistributedEngine::applyFilters(ImageFile* file, const s
         int height = img->getHeight();
         Pixel** data = img->getData();
 
-        bool isGray = (img->getType() == "PGM"); // ejemplo, tu ImageFile puede tener getType
+        bool isGray = (img->getType() == "PGM");
         std::vector<int> buffer(width * height * (isGray ? 1 : 3));
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 Pixel* p = data[y * width + x];
-                int base = (y*width + x)*(isGray ? 1 : 3);
+                int base = (y*width + x) * (isGray ? 1 : 3);
                 for (int c = 0; c < (isGray ? 1 : 3); ++c) {
                     buffer[base + c] = p->getChannel(c);
                 }
@@ -43,7 +43,7 @@ std::vector<ImageFile*> DistributedEngine::applyFilters(ImageFile* file, const s
         imageSizes.push_back(buffer.size());
     }
 
-    // Enviar al rank 0
+    // Enviar imágenes al rank 0
     if (rank != 0) {
         int nImages = serializedImages.size();
         MPI_Send(&nImages, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
@@ -53,9 +53,16 @@ std::vector<ImageFile*> DistributedEngine::applyFilters(ImageFile* file, const s
         }
     }
 
-    std::vector<ImageFile*> allResults = localResults;
+    // Recolectar resultados en rank 0
+    std::vector<ImageFile*> allResults;
 
     if (rank == 0) {
+        // Agregar primero las imágenes locales del rank 0
+        for (auto img : localResults) {
+            allResults.push_back(img);
+        }
+
+        // Recibir imágenes de otros procesos
         for (int src = 1; src < size; ++src) {
             int nImages;
             MPI_Recv(&nImages, 1, MPI_INT, src, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
@@ -98,9 +105,6 @@ std::vector<ImageFile*> DistributedEngine::applyFilters(ImageFile* file, const s
 }
 
 ImageFile* DistributedEngine::applyFilter(ImageFile* file, const Filter* filter) {
-    // Podrías llamar a SequentialEngine directamente
     SequentialEngine seqEngine;
     return seqEngine.applyFilter(file, filter);
 }
-
-
