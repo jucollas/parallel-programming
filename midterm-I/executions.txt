@@ -1,0 +1,94 @@
+sequencial:
+
+ 
+lena.ppm : 128px x 128px
+./bin/filterer images/lena.ppm results/lena-blur.ppm --f blur
+CPU time used: 0.018168 seconds
+Total execution time: 0.0225843 seconds
+
+lena.pgm: 512px x 512px
+./bin/filterer images/lena.pgm results/lena-blur.pgm --f blur
+CPU time used: 0.15575 seconds
+Total execution time: 0.158896 seconds
+
+fruit.ppm: 900px x 450px
+./bin/filterer images/fruit.ppm  results/fruit-laplace.ppm --f laplace
+CPU time used: 0.348758 seconds
+Total execution time: 0.355647 seconds
+
+fruit.pgm: 900px x 450px
+./bin/filterer images/fruit.pgm  results/fruit-laplace.pgm --f laplace
+CPU time used: 0.241277 seconds
+Total execution time: 0.269553 seconds
+
+
+puj.ppm : 1950 px x 600px
+./bin/filterer images/puj.ppm  results/puj-sharpening.ppm --f sharpening
+CPU time used: 1.00763 seconds
+Total execution time: 1.02931 seconds
+
+puj.pgm : 1950 px x 600px
+
+./bin/filterer images/puj.pgm  results/puj-sharpening.pgm --f sharpening
+CPU time used: 0.720297 seconds
+Total execution time: 0.725718 seconds
+
+pthread:
+
+damma.ppm : 1000px x 1278px
+ ./bin/pth_filterer images/damma.ppm results/damma-blur.ppm --f blur
+CPU time used (sum over all threads): 1.24612 seconds
+Total execution time (wall-clock): 0.825564 seconds
+
+damma.pgm : 1000px x 1278px
+ ./bin/pth_filterer images/damma.ppm results/damma-blur.ppm --f blur
+CPU time used (sum over all threads): 1.30341 seconds
+Total execution time (wall-clock): 0.835581 seconds
+
+sulfur.ppm 823.px x 1000px
+ ./bin/pth_filterer images/sulfur.ppm results/sulfur-blur.ppm --f laplace
+CPU time used (sum over all threads): 0.782842 seconds
+Total execution time (wall-clock): 0.514698 seconds
+
+sulfur.pgm 823.px x 1000px
+./bin/pth_filterer images/sulfur.pgm results/sulfur-blur.pgm --f laplace
+CPU time used (sum over all threads): 0.576341 seconds
+Total execution time (wall-clock): 0.311964 seconds
+
+omp:
+sulfur.ppm 823.px x 1000px
+
+./bin/omp_filterer images/sulfur.pgm results/sulfur_omp.pgm 
+CPU time used (sum over all threads): 1.37405 seconds
+Total execution time (wall-clock): 0.470152 seconds
+
+sulfur.pgm 823.px x 1000px
+./bin/omp_filterer images/sulfur.ppm results/sulfur_omp.ppm
+CPU time used (sum over all threads): 1.81515 seconds
+Total execution time (wall-clock): 0.636378 seconds
+
+damma.ppm : 1000px x 1278px
+ ./bin/omp_filterer images/damma.ppm results/damma_omp.ppm
+CPU time used (sum over all threads): 2.75941 seconds
+Total execution time (wall-clock): 0.959027 seconds
+
+damma.pgm : 1000px x 1278px
+./bin/omp_filterer images/damma.pgm results/damma_omp.pgm
+CPU time used (sum over all threads): 2.31829 seconds
+Total execution time (wall-clock): 0.827149 seconds
+
+mpi:
+
+mpirun -np 3 --hostfile hosts bin/mpi_filter images/puj.pgm results/puj.pgm
+
+=== Tiempos de ejecución por nodo ===
+Rank 0 -> CPU: 0.884117 s, Wall: 1.46376 s
+Rank 1 -> CPU: 0.780251 s, Wall: 1.17532 s
+Rank 2 -> CPU: 0.917012 s, Wall: 1.26803 s
+
+mpirun -np 3 --hostfile hosts bin/mpi_filter images/sulfur.pgm results/sulfur_mpi.pgm
+
+=== Tiempos de ejecución por nodo ===
+Rank 0 -> CPU: 0.627101 s, Wall: 1.01008 s
+Rank 1 -> CPU: 0.516747 s, Wall: 0.77581 s
+Rank 2 -> CPU: 0.559294 s, Wall: 0.790338 s

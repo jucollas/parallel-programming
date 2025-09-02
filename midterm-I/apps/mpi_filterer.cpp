@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <chrono>
 #include <ctime>
 #include <mpi.h>
 
@@ -37,12 +36,13 @@ void execute_all_mpi(std::string input_file, std::string output_file, Distribute
     std::vector<const Filter*> filters = { &Blur, &Laplace, &Sharpening };
     std::vector<std::string> names = { "blur", "laplace", "sharpening" };
 
-    // Obtener el rank del nodo
-    int rank;
+    // Obtener el rank y size del nodo
+    int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     // Medir tiempo antes de aplicar filtros
-    auto start_wall = std::chrono::high_resolution_clock::now();
+    double start_wall = MPI_Wtime();
     std::clock_t start_cpu = std::clock();
 
     // Aplicar filtros
@@ -50,9 +50,24 @@ void execute_all_mpi(std::string input_file, std::string output_file, Distribute
 
     // Medir tiempo después de aplicar filtros
     std::clock_t end_cpu = std::clock();
-    auto end_wall = std::chrono::high_resolution_clock::now();
+    double end_wall = MPI_Wtime();
 
-    // Nodo padre guarda los resultados y muestra los tiempos
+    // Calcular tiempos locales
+    double cpu_time = double(end_cpu - start_cpu) / CLOCKS_PER_SEC;
+    double wall_time = end_wall - start_wall;
+
+    // Recolectar los tiempos de todos los nodos
+    double local_times[2] = {cpu_time, wall_time};
+    std::vector<double> all_times;
+    if (rank == 0) {
+        all_times.resize(size * 2);
+    }
+
+    MPI_Gather(local_times, 2, MPI_DOUBLE,
+               all_times.data(), 2, MPI_DOUBLE,
+               0, MPI_COMM_WORLD);
+
+    // Nodo 0 guarda resultados y muestra tiempos
     if (rank == 0) {
         // Guardar resultados en archivos
         std::string prefix = output_file.substr(0, output_file.size() - ext.size());
@@ -64,12 +79,14 @@ void execute_all_mpi(std::string input_file, std::string output_file, Distribute
             delete results[i];
         }
 
-        // Calcular tiempos
-        double cpu_time = double(end_cpu - start_cpu) / CLOCKS_PER_SEC;
-        double wall_time = std::chrono::duration<double>(end_wall - start_wall).count();
-
-        std::cout << "CPU time used: " << cpu_time << " seconds\n";
-        std::cout << "Total execution time: " << wall_time << " seconds\n";
+        // Mostrar tiempos de todos los nodos
+        std::cout << "\n=== Tiempos de ejecución por nodo ===\n";
+        for (int i = 0; i < size; i++) {
+            double cpu = all_times[i * 2];
+            double wall = all_times[i * 2 + 1];
+            std::cout << "Rank " << i
+                      << " -> CPU: " << cpu << " s, Wall: " << wall << " s\n";
+        }
     }
 
     delete file;
