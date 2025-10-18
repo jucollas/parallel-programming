@@ -21,6 +21,7 @@
 #include <unordered_set>
 #include <utility>
 #include <string>
+#include <chrono>
 
 using namespace std;
 
@@ -29,6 +30,7 @@ const char EMPTY_VALUE = '#';
 
 string GOAL;
 int nRow, nCol;
+int nodesExp;
 
 /**
  * @brief Possible movement directions
@@ -184,6 +186,7 @@ int aStarSearch(const string& start){
 	while (!q.empty() && ans == -1){
 		State cur = q.top();
 		q.pop();
+		nodesExp += 1;
 		if(cur.board == GOAL){
 			ans = cur.cost_g;
 		} else{
@@ -222,3 +225,29 @@ int main(){
 	cout << result << endl;
 	return 0;
 }
+
+/**
+ * @brief Main experimet
+ * @note Excute with: puzzel_h1.out < ../test/puzzles.txt
+ */
+
+/*int main(){
+    nRow = 4;
+    nCol = 4;
+    string start;
+    GOAL = calculeGoal(nRow, nCol);
+    int nCase = 1;
+    while (cin >> start){
+        nodesExp = 0;
+        auto start_time = chrono::high_resolution_clock::now();
+        int result = aStarSearch(start);
+        auto end_time = chrono::high_resolution_clock::now();
+        
+        chrono::duration<double> elapsed = end_time - start_time;
+        cout << "Caso " << nCase++ << ":\n";
+        cout << "Node Exp: " << nodesExp << endl;
+        cout << "Resultado: " << result << endl;
+        cout << "Tiempo de ejecución: " << elapsed.count() << " segundos" << endl;
+    }
+    return 0;
+}*/

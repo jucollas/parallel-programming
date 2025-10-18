@@ -1,5 +1,5 @@
 /**
- * @file h1_puzzle_solver.cpp
+ * @file h2_puzzle_solver.cpp
  * @brief 4x4 Sliding Puzzle Solver using A* (best-first with f = g + h)
  * 
  * This program solves the 4x4 sliding puzzle by finding the minimum number
@@ -21,12 +21,14 @@
 #include <unordered_set>
 #include <utility>
 #include <string>
+#include <chrono>
 
 using namespace std;
 
 const char EMPTY_VALUE = '#';
 
 int nRow, nCol;
+int nodesExp;
 string GOAL;
 vector<pair<int, int>> goalPos;
 
@@ -175,7 +177,7 @@ string calculeGoal(int n, int m){
 
 vector<pair<int, int>> calculeGoalPos(int n, int m){
   vector<pair<int, int>> ans;
-  for(int i = 0; i < (n * m) - 1; ++i){
+  for(int i = 0; i < (n * m); ++i){
     ans.push_back(index_to_cord(i));
   }
   return ans;
@@ -204,6 +206,7 @@ int aStarSearch(const string& start){
     while (!q.empty() && ans == -1){
         State cur = q.top();
         q.pop();
+        nodesExp += 1;
         if (cur.board == GOAL){
             ans = cur.cost_g;
         } else {
@@ -244,3 +247,53 @@ int main(){
     cout << result << endl;
     return 0;
 }
+
+
+/**
+ * @brief Main experimet
+ * @note Excute with: puzzel_h2.out < ../test/puzzles.txt
+ */
+
+/*int main(){
+    nRow = 4;
+    nCol = 4;
+    string start;
+    GOAL = calculeGoal(nRow, nCol);
+    goalPos = calculeGoalPos(nRow, nCol);
+    int nCase = 1;
+    while (cin >> start){
+        nodesExp = 0;
+        auto start_time = chrono::high_resolution_clock::now();
+        int result = aStarSearch(start);
+        auto end_time = chrono::high_resolution_clock::now();
+        
+        chrono::duration<double> elapsed = end_time - start_time;
+        cout << "Caso " << nCase++ << ":\n";
+        cout << "Node Exp: " << nodesExp << endl;
+        cout << "Resultado: " << result << endl;
+        cout << "Tiempo de ejecución: " << elapsed.count() << " segundos" << endl;
+    }
+    return 0;
+}*/
+
+/*int main(){
+    cin >> nRow >> nCol;
+    string start;
+    GOAL = calculeGoal(nRow, nCol);
+    goalPos = calculeGoalPos(nRow, nCol);
+    for(int i = 0; i< (int) goalPos.size(); ++i)
+        cout << goalPos[i].first << ", " << goalPos[i].second << endl;
+    int nCase = 1;
+    cin >> start;
+    nodesExp = 0;
+    auto start_time = chrono::high_resolution_clock::now();
+    int result = aStarSearch(start);
+    auto end_time = chrono::high_resolution_clock::now();
+    
+    chrono::duration<double> elapsed = end_time - start_time;
+    cout << "Caso " << nCase++ << ":\n";
+    cout << "Node Exp: " << nodesExp << endl;
+    cout << "Resultado: " << result << endl;
+    cout << "Tiempo de ejecución: " << elapsed.count() << " segundos" << endl;
+    return 0;
+}*/
